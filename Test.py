@@ -20,7 +20,7 @@ Initial_State=np.zeros(8)
 
 #Time to start record and end
 #(θ_StartRecord, θ_End)
-θInterval=(200.*π,204.*π) 
+θInterval=(1000.*π,1004.*π) 
 
 TargetVo=2.75
 

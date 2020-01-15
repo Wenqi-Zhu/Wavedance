@@ -1,5 +1,5 @@
-from .ErrorDefine import *
-from .Solver import *
+from ErrorDefine import *
+from Solver import *
 from math import pi
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ class Circuit(object):
         Initial_State:np.matrix,
         Step=200,
         Output_Record=True,
-        Silent=True):
+        Silent=False):
         '''
         Run simulation for this circuit.
         '''

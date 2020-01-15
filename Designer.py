@@ -1,9 +1,9 @@
-from .ClassDef import Circuit
+from ClassDef import Circuit
 import math
 from math import pi as π
 import numpy as np
 import pandas as pd
-from .ErrorDefine import *
+from ErrorDefine import *
 def GetF(R:pd.DataFrame,Vo:float)->tuple:
         #Step 1: Get vS2π (Last one of the dataframe)
         F1=R.vS.iloc[-1]
