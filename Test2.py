@@ -7,8 +7,8 @@ from Oscilloscope import Oscilloscope
 #and name it "My_Circuit"
 My_Circuit = ClassE2DCDCISO(
                         #Parameters:
-                        A=0.676,    B=1.97,   Q1=0.4,   H=0.02,     
-                        NTX=1.0,    kTX=0.90,  J=1.51,    Ds=0.5,
+                        A=0.9258,   B=0.6461,  Q1=0.4,   H=0.02,     
+                        NTX=1.0,    kTX=0.90,  J=9.5214,    Ds=0.5,
                         K=0.02,
                         #Parasitic resistances：     
                         r1=0.01,  r2=0.01,  rS=0.001, rD=0.001,

@@ -25,8 +25,8 @@ class Circuit(object):
         '''
         Record=pd.DataFrame()
         Start_θ, Record_θ, End_θ = 0.0, θ_Interval[0], θ_Interval[1] 
-        if Record_θ > End_θ:
-            raise CircuitParameterError("Record_θ cannot be larger than End_θ!")
+        if Record_θ > End_θ :
+            raise CircuitParameterError("Record_θ cannot be larger than End_θ!😯")
         Period = End_θ / (2.0 * pi)
         TotalStep = int(Period * Step)
         θSpace, StepSize = np.linspace(Start_θ,End_θ,num=TotalStep,retstep=True)

@@ -8,10 +8,10 @@ from Designer import Designer
 #and name it "My_Circuit"
 My_Circuit = ClassEDWPT(
                         #Parameters:
-                        A=1.005,   B=0.5415,  Q=0.5,    H=20.0,     
-                        N=1.0,     k=0.20,    S=0.02,   J=0.7743,
+                        A=0.9258,   B=0.6461,  Q=0.25,    H=20.0,     
+                        N=1.0,     k=0.20,    S=0.02,   J=5.0,
                         Ds=0.5,    U=1.0,
-                        #Parasitic resistances：     
+                        #Parasitic resistances：      
                         rL1=0.002,  rL2=0.002,   rS=0.002, rD=0.002  
                         )
 
@@ -20,10 +20,12 @@ Initial_State=np.zeros(8)
 
 #Time to start record and end
 #(θ_StartRecord, θ_End)
-θInterval=(1000.*π,1004.*π) 
+θInterval=(200.*π,204.*π) 
 
-TargetVo=2.75
+#Target Output Voltage
+TargetVo=2.7
 
+#Run Newton's Method
 My_Circuit2 = Designer(My_Circuit,TargetVo)
 
 #Run simulation, let's rock!

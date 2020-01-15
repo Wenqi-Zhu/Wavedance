@@ -18,9 +18,9 @@ def GetF(R:pd.DataFrame,Vo:float)->tuple:
 
 def Designer(C:Circuit,Vo:float):
     Iter=0
-    
+    C.BodyDiode=False
     #Read in parameters to be designed
-    λ=np.matrix([[ C.A, C.B, C.J ]])
+    λ=np.matrix([[ C.A, C.B, C.Q ]])
 
     #A very small delta
     Delta=1e-6
@@ -39,12 +39,12 @@ def Designer(C:Circuit,Vo:float):
 
     while True:
         print('Iteration:',Iter,'\n')
-        print('     A:',λ[0,0],'B:',λ[0,1],'J:',λ[0,2],'\n')
+        print('     A:',λ[0,0],'B:',λ[0,1],'Q:',λ[0,2],'\n')
         print('     Calculating:F','\n')
         
         Iter+=1
 
-        C.A, C.B, C.J = λ[0,0], λ[0,1], λ[0,2]
+        C.A, C.B, C.Q = λ[0,0], λ[0,1], λ[0,2]
 
         #Run simulator to get waveform
         Result=C.Run(SimulatorIntv, Initial_State,200, True, True)
@@ -54,8 +54,16 @@ def Designer(C:Circuit,Vo:float):
         print('     F:',F,'\n')
 
         #Convergence Detection
-        if math.isnan(F1):
-            raise(ConvergenceError)
+        if math.isnan(F1) or abs(F1)>1e5:
+            raise ConvergenceError(
+        """
+        Oops! Designer failed to convergence!😯
+            Please check your initial circuit.
+            This problem may caused by that the TargetVo is far from 
+            the output voltage of the intial circuit.
+            Consider adjust TargetVo a liitle bit once a time.
+            e.g. 2.8→2.7→2.6→2.5 instead of 2.8→2.5
+            """)
         if abs(F1)<Target[0] and abs(F2)<Target[1] and abs(F3)<Target[2]:
             break
         dF=np.zeros((3,3))
@@ -63,7 +71,7 @@ def Designer(C:Circuit,Vo:float):
         for i in (0,1,2):
 
             λ[0,i]+=Delta
-            C.A, C.B, C.J = λ[0,0], λ[0,1], λ[0,2]
+            C.A, C.B, C.Q = λ[0,0], λ[0,1], λ[0,2]
             #Run simulator to get waveform
             Result=C.Run(SimulatorIntv,Initial_State,200, True, True)
             dF1, dF2, dF3 = GetF(Result,Vo)
@@ -73,6 +81,7 @@ def Designer(C:Circuit,Vo:float):
         FInv=np.linalg.inv(dF)
         FNext=F*FInv
         λ=λ-FNext
-    print('Design Successful!\n')
-    print('A:',λ[0,0],'B:',λ[0,1],'J:',λ[0,2],'\n')
+    print('Design Successful!😁\n')
+    print('A:',λ[0,0],'B:',λ[0,1],'Q:',λ[0,2],'\n')
+    C.BodyDiode=True
     return C
