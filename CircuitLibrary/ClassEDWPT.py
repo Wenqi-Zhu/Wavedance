@@ -1,22 +1,21 @@
-from ..ClassDef import Circuit
+from ClassDef import Circuit
 import math
 import numpy as np
 import pandas as pd
 
 class ClassEDWPT(Circuit):
     BodyDiode=True
-
-    Order=8
+    order=8
     Number_of_Para=14 #Number of parameters it has.
-
     Para_List=['A','B','Q','H','N','k','U','S','J','Ds','rL1','rL2','rS','rD']
     State_List=['iC','vS','v1','i1','i2','v2','vD1','vO']
-    Output_List=['θ','iC','vS','v1','i1','i2','v2','vD1','vD2','vO']
+    Output_List=['θ','iC','t','vS','v1','i1','i2','v2','vD1','vO']
     def __init__(self,**kw):
         '''
         Initialize the circuit.
         '''
         self.Para_Check(kw)
+        self.Vi,  self.RL,  self.fs = kw['Vi'],   kw['RL'],  kw['fs']
         self.A,   self.B,   self.Q   = kw['A'] ,  kw['B'],   kw['Q']
         self.H,   self.N,   self.k   = kw['H'] ,  kw['N'],   kw['k']
         self.S,   self.J,   self.Ds  = kw['S'] ,  kw['J'],   kw['Ds']
@@ -100,18 +99,25 @@ class ClassEDWPT(Circuit):
                       ])
         return Mat_B
 
-    def CreateDataFrame(self,θ:float,State:np.matrix,DataFrame:pd.DataFrame)->pd.DataFrame:
+    def CreateDataFrame(
+            self,
+            θ:float,
+            State:np.matrix,
+            DataFrame:pd.DataFrame
+    )->pd.DataFrame:
+        Vi, RL, ωs = self.Vi, self.RL, self.fs/2.0/math.pi
         #Writing dataframe according to the state matrix.
         DataFrame=DataFrame.append({'θ':θ,
-                          'iC':   State[0],
-                          'vS':   State[1],
-                          'v1':   State[2],
-                          'i1':   State[3],
-                          'i2':   State[4],
-                          'v2':   State[5],
-                          'vD1':  State[6],
-                          'vD2':  -State[7]-State[6],
-                          'vO':   State[7],
+                                    't':θ/ωs,
+                          'iC':   State[0] * Vi / RL,
+                          'vS':   State[1] * Vi,
+                          'v1':   State[2] * Vi,
+                          'i1':   State[3]*  Vi/ RL,
+                          'i2':   State[4]*  Vi/ RL,
+                          'v2':   State[5] * Vi,
+                          'vD1':  State[6] * Vi,
+                          'vD2':  (-State[7]-State[6]) * Vi,
+                          'vO':   State[7] * Vi,
                           },
                           ignore_index=True)
         return DataFrame

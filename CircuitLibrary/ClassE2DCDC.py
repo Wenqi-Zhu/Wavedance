@@ -1,4 +1,4 @@
-from ..ClassDef import Circuit
+from .ClassDef import Circuit
 import math
 import numpy as np
 import pandas as pd
@@ -6,18 +6,18 @@ import pandas as pd
 class ClassE2DCDC(Circuit):
     BodyDiode=True
 
-    Order=7
+    order=7
     Number_of_Para=13 #Number of parameters it has.
 
     Para_List=['A','B','H','J','D','Q0','K','Qf','rS','rD','rC','rF','r0']
     State_List=['iC','vS','vC0','iL0','vD','iF','vF']
-    Output_List=['θ','iC','vS','vC0','iL0','vD','iF','vF']
+    Output_List=['θ','t','iC','vS','vC0','iL0','vD','iF','vF']
     def __init__(self,**kw):
         '''
         Initialize the circuit.
         '''
         self.Para_Check(kw)
-
+        self.Vi, self.RL, self.fs = kw['Vi'], kw['RL'], kw['fs']
         self.A,  self.B,  self.H   = kw['A'] , kw['B'],  kw['H']
         self.J,  self.D,  self.Q0  = kw['J'] , kw['D'],  kw['Q0']
         self.K,  self.Qf, self.rS  = kw['K'] , kw['Qf'], kw['rS']
@@ -91,14 +91,16 @@ class ClassE2DCDC(Circuit):
         return Mat_B
 
     def CreateDataFrame(self,θ:float,State:np.matrix,DataFrame:pd.DataFrame)->pd.DataFrame:
+        Vi, RL, ωs = self.Vi, self.RL, self.fs/2.0/math.pi
         #Writing dataframe according to the state matrix.
         DataFrame=DataFrame.append({'θ':θ,
-                          'iC':  State[0],
-                          'vS':  State[1],
-                          'vC0': State[2],
-                          'iL0': State[3],
-                          'vD':  State[4],
-                          'iF':  State[5],
-                          'vF':  State[6]},
+                          't': θ/ωs,
+                          'iC':  State[0] * Vi / RL,
+                          'vS':  State[1] * Vi,
+                          'vC0': State[2] * Vi,
+                          'iL0': State[3] * Vi / RL,
+                          'vD':  State[4] * Vi,
+                          'iF':  State[5] * Vi / RL,
+                          'vF':  State[6] * Vi},
                           ignore_index=True)
         return DataFrame

@@ -1,23 +1,25 @@
-from ..ClassDef import Circuit
+from ClassDef import Circuit
 import math
 import numpy as np
 import pandas as pd
 
+
 class ClassE2DCDCISO(Circuit):
     BodyDiode=True
 
-    Order=7
+    order=7
     Number_of_Para=14 #Number of parameters it has.
 
     Para_List=['A','B','H','J','Ds','Q1','kTX','NTX','K','rS','rD','rC','r1','r2']
     State_List=['iC','vS','vC0','i1','i2','vD','vO']
-    Output_List=['θ','iC','vS','vC0','i1','i2','vD','vO']
+    Output_List=['θ','t','iC','vS','vC0','i1','i2','vD','vO']
     def __init__(self,**kw):
         '''
         Initialize the circuit.
         '''
         self.Para_Check(kw)
         #Read parameters
+        self.Vi, self.RL, self.fs = kw['Vi'], kw['RL'], kw['fs']
         self.A,   self.B,   self.H  = kw['A']   , kw['B'],   kw['H']
         self.J,   self.Ds,  self.Q1 = kw['J']   , kw['Ds'],  kw['Q1']
         self.kTX, self.NTX, self.K  = kw['kTX'] , kw['NTX'], kw['K']
@@ -96,15 +98,17 @@ class ClassE2DCDCISO(Circuit):
         return Mat_B
 
     def CreateDataFrame(self,θ:float,State:np.matrix,DataFrame:pd.DataFrame)->pd.DataFrame:
+        Vi, RL, ωs = self.Vi, self.RL, self.fs/2.0/math.pi
         #Writing dataframe according to the state matrix.
         DataFrame=DataFrame.append({'θ':θ,
-                          'iC':  State[0],
-                          'vS':  State[1],
-                          'vC0': State[2],
-                          'i1':  State[3],
-                          'i2':  State[4],
-                          'vD':  State[5],
-                          'vO':  State[6]},
+                          't': θ / ωs,
+                          'iC':  State[0] * Vi / RL,
+                          'vS':  State[1] * Vi,
+                          'vC0': State[2] * Vi,
+                          'i1':  State[3] * Vi / RL,
+                          'i2':  State[4] * Vi / RL,
+                          'vD':  State[5] * Vi,
+                          'vO':  State[6] * Vi},
                           ignore_index=True)
         return DataFrame
         
