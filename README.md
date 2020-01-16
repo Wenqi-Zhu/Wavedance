@@ -1,4 +1,6 @@
 ![Banner](https://github.com/Wenqi-Zhu/Wavedance/raw/master/LogoAlpha.png)
+
+![Badge1](https://img.shields.io/badge/%E9%9D%A2%E8%AF%95%20BAT-passing-brightgreen.svg)
 # Change Log
 ## v0.0.2 (Jan 16th 2020)
 - Circuit designer using Newton's method
