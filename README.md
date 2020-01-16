@@ -1,4 +1,7 @@
 ![Banner](https://github.com/Wenqi-Zhu/Wavedance/raw/master/LogoAlpha.png)
+
+![Badge-V](https://img.shields.io/badge/version-0.0.2-ff69b4)
+![Badge-License](https://img.shields.io/badge/license-MIT-ff69b4)
 # Change Log
 ## v0.0.2 (Jan 16th 2020)
 - Circuit designer using Newton's method
