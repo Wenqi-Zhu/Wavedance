@@ -19,15 +19,15 @@ My_Circuit = ClassE2DCDCISO(
 )
 
 # Initial state (zero 7x1 matrix)
-Initial_State = np.zeros(7)
+initial_state = np.zeros(7)
 
 # Time to start record and end
 # (θ_StartRecord, θ_End)
 θInterval = (100. * π, 104. * π)
 
 # Run simulation, let's rock!
-# The waveform will Runbe saved in dataframe "Record"
-Record = My_Circuit.Run(θInterval, Initial_State)
+# The waveform will be saved in data frame "Record"
+Record = My_Circuit.run(θInterval, initial_state)
 
 # Now, see the waveform by the method "Oscilloscope"
 Graph = Oscilloscope(Record, ['iC', 'vS', 'i1', 'i2', 'vD', 'vO'])

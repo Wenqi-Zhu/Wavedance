@@ -1,6 +1,4 @@
 import numpy as np
-from math import pi as π
-import numpy as np
 
 
 def BDF_4(

@@ -6,13 +6,13 @@ import pandas as pd
 from ErrorDefine import *
 
 
-def GetF(R: pd.DataFrame, Vo: float) -> tuple:
+def getF(r: pd.DataFrame, Vo: float) -> tuple:
     '''
     This function calculates the F Matrix of the Newton's Method
     based on the waveform.
 
     Args:
-        R: Waveform
+        r: Waveform
         Vo: Target output voltage
 
     Returns:
@@ -22,15 +22,15 @@ def GetF(R: pd.DataFrame, Vo: float) -> tuple:
             F2 = Vo - VoTarget
     '''
     # Step 1: Get vS2π (Last one of the dataframe)
-    F0 = R.vS.iloc[-1]
+    f0 = r.vS.iloc[-1]
 
     # Step 2: Get dvS/dtiC
-    F1 = R.iC.iloc[-1] - R.i1.iloc[-1]
+    f1 = r.iC.iloc[-1] - r.i1.iloc[-1]
 
     # Step 3： Get Vo(Average)
-    F2 = R['vO'].mean() - Vo
+    f2 = r['vO'].mean() - Vo
 
-    return F0, F1, F2
+    return f0, f1, f2
 
 def Designer(C: Circuit, Vo: float) -> Circuit:
     '''
@@ -54,14 +54,14 @@ def Designer(C: Circuit, Vo: float) -> Circuit:
     # Target tuple
     # When the F1-F3 is smaller than their target,
     # the designer will stop and output.
-    Target = (5e-3, 1e-2, 5e-3)
+    target = (5e-3, 1e-2, 5e-3)
 
     # Time to start record and end
     # (θ_StartRecord, θ_End)
-    SimulatorIntv = (200. * π, 202. * π)
+    simulator_intv = (200. * π, 202. * π)
 
     # Initial state (zero 8x1 matrix)
-    Initial_State = np.zeros(8)
+    initial_state = np.zeros(8)
 
     while True:
         print('=================================\nIteration:', Iter, '\n=================================\n')
@@ -73,14 +73,14 @@ def Designer(C: Circuit, Vo: float) -> Circuit:
         C.A, C.B, C.Q = λ[0, 0], λ[0, 1], λ[0, 2]
 
         # Run simulator to get waveform
-        Result = C.Run(SimulatorIntv, Initial_State, 200, True, True)
+        result = C.run(simulator_intv, initial_state, 200, True, True)
 
-        F1, F2, F3 = GetF(Result, Vo)
-        F = np.mat([[F1, F2, F3]])
+        f1, f2, f3 = getF(result, Vo)
+        F = np.mat([[f1, f2, f3]])
         print('     F:', F, '\n')
 
         # Convergence Detection
-        if math.isnan(F1) or abs(F1) > 1e5:
+        if math.isnan(f1) or abs(f1) > 1e5:
             raise ConvergenceError(
                 """
         Oops! Designer failed to convergence!😯
@@ -90,7 +90,7 @@ def Designer(C: Circuit, Vo: float) -> Circuit:
             Consider adjust TargetVo a liitle bit once a time.
             e.g. 2.8→2.7→2.6→2.5 instead of 2.8→2.5
             """)
-        if abs(F1) < Target[0] and abs(F2) < Target[1] and abs(F3) < Target[2]:
+        if abs(f1) < target[0] and abs(f2) < target[1] and abs(f3) < target[2]:
             break
         dF = np.zeros((3, 3))
         print('     Calculating:dF')
@@ -99,9 +99,9 @@ def Designer(C: Circuit, Vo: float) -> Circuit:
             λ[0, i] += Delta
             C.A, C.B, C.Q = λ[0, 0], λ[0, 1], λ[0, 2]
             # Run simulator to get waveform
-            Result = C.Run(SimulatorIntv, Initial_State, 200, True, True)
-            dF1, dF2, dF3 = GetF(Result, Vo)
-            dF[i] = [(dF1 - F1) / Delta, (dF2 - F2) / Delta, (dF3 - F3) / Delta]
+            result = C.run(simulator_intv, initial_state, 200, True, True)
+            d_f1, d_f2, d_f3 = getF(result, Vo)
+            dF[i] = [(d_f1 - f1) / Delta, (d_f2 - f2) / Delta, (d_f3 - f3) / Delta]
             λ[0, i] -= Delta
         print('     dF:', dF, '\n')
         λ = λ - F * np.linalg.inv(dF)

@@ -1,7 +1,7 @@
 import numpy as np
 from math import pi as π
 from CircuitLibrary.ClassEDWPT import ClassEDWPT
-from Oscilloscope import Oscilloscope
+from Oscilloscope import oscilloscope
 from Designer import Designer
 
 
@@ -11,7 +11,7 @@ My_Circuit = ClassEDWPT(
     # Basic Quantities:
     Vi=5.0,  RL=5.0,  fs=1e6,
     # Parameters:
-    A=0.9258, B=0.6461, Q=0.25, H=20.0,
+    A=0.9338, B=0.670,  Q=0.426, H=20.0,
     N=1.0,    k=0.20,   S=0.02, J=5.0,
     Ds=0.5,   U=1.0,
     # Parasitic resistances：
@@ -19,24 +19,25 @@ My_Circuit = ClassEDWPT(
 )
 
 # Initial state (zero 8x1 matrix)
-Initial_State = np.zeros(8)
+initial_state = np.zeros(8)
 
 # Time to start record and end
 # (θ_StartRecord, θ_End)
-θInterval = (200. * π, 202. * π)
+θ_interval = (1200. * π, 1202. * π)
 
 # Target Output Voltage
-TargetVo = 15.0
+TargetVo = 17.0
 
 # Run Newton's Method
 My_Circuit2 = Designer(My_Circuit, TargetVo)
 
 # Run simulation, let's rock!
 # The waveform will be saved in dataframe "Record"
-Record = My_Circuit2.Run(θInterval, Initial_State)
+record = My_Circuit.run(θ_interval, initial_state)
 
+print(record)
 # Now, see the waveform by the method "Oscilloscope"
-Graph = Oscilloscope(Record, ['iC', 'vS', 'i1', 'i2', 'vD1', 'vO'])
+Graph = oscilloscope(record, ['iC', 'vS', 'i1', 'i2', 'vD1', 'vO'])
 
 # You can also output "Record" to csv file
 # Record.to_csv('Data//Record.csv',encoding='utf_8_sig')
