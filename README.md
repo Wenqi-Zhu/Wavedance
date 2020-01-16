@@ -1,4 +1,9 @@
 ![Banner](https://github.com/Wenqi-Zhu/Wavedance/raw/master/LogoAlpha.png)
+# Change Log
+## v0.0.2 (Jan 16th 2020)
+- Circuit designer using Newton's method
+- Fixed a performance issue
+- Oscilloscope now draws concrete voltage and current units.
 
 Wavedance is a power converter designer and simulator
 
