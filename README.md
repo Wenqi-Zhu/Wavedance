@@ -5,6 +5,7 @@
 - Fixed a performance issue
 - Oscilloscope now draws concrete voltage and current units.
 
+# Wavedance
 Wavedance is a power converter designer and simulator
 
 ## Fast Simulation
